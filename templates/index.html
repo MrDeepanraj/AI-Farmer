@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="AI Farmer Assistant helps farmers get crop guidance, weather insights, disease checks, and AI support in one dashboard." />
+    <meta name="theme-color" content="#2f855a" />
+    <title>AI Farmer Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero__content">
+        <p class="eyebrow">Smart Green Farming</p>
+        <h1>Grow smarter with AI-powered farm support.</h1>
+        <p>Get weather insights, crop guidance, disease help, and practical AI advice from one clean dashboard.</p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#features">Explore Features</a>
+          <a class="btn btn--secondary" href="#about">How It Works</a>
+        </div>
+        <p id="feature-status" class="status" aria-live="polite">Choose a feature to see a quick insight.</p>
+      </div>
+
+      <aside class="hero__card" aria-label="Farm tip summary">
+        <h2>Today’s Farm Tip</h2>
+        <p>Check the weather, protect your crops, and ask for practical guidance in just a few clicks.</p>
+        <span class="badge">Live guidance</span>
+        <div class="hero__stats">
+          <div>
+            <strong>24/7</strong>
+            <span>Farm support</span>
+          </div>
+          <div>
+            <strong>Fast</strong>
+            <span>Practical advice</span>
+          </div>
+        </div>
+      </aside>
+    </header>
+
+    <main>
+      <section class="section" id="features" aria-labelledby="features-title">
+        <div class="section__heading">
+          <p class="eyebrow">Features</p>
+          <h2 id="features-title">Everything you need for healthier fields</h2>
+        </div>
+
+        <div class="features-grid">
+          <article class="feature-card">
+            <div class="feature-card__icon" aria-hidden="true">🌱</div>
+            <h3>Crop Recommendation</h3>
+            <p>Find the best crop choices for your land, season, and local conditions.</p>
+            <button type="button" class="feature-btn" data-target="recommendation" data-message="Crop recommendations help you choose the right variety for the season.">Learn More</button>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-card__icon" aria-hidden="true">🩺</div>
+            <h3>Disease Detection</h3>
+            <p>Spot common plant issues early and take action before they spread.</p>
+            <button type="button" class="feature-btn" data-target="disease" data-message="Early disease checks can reduce losses and protect your harvest.">Learn More</button>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-card__icon" aria-hidden="true">🤖</div>
+            <h3>Ask AI</h3>
+            <p>Get simple, practical advice tailored to your farm situation.</p>
+            <button type="button" class="feature-btn" data-target="chat" data-message="AI guidance gives you fast ideas for daily farming decisions.">Learn More</button>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-card__icon" aria-hidden="true">🌦️</div>
+            <h3>Weather</h3>
+            <p>Stay aware of conditions that affect watering, pests, and crop growth.</p>
+            <button type="button" class="feature-btn" data-target="weather" data-message="Weather updates help you plan irrigation and field work with confidence.">Learn More</button>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="recommendation" aria-labelledby="recommendation-title">
+        <div class="recommendation-card">
+          <div class="section__heading">
+            <p class="eyebrow">Crop Recommendation</p>
+            <h2 id="recommendation-title">Find a smart crop match</h2>
+          </div>
+
+          <form id="crop-form" class="recommendation-form">
+            <label>
+              Soil Type
+              <input type="text" name="soil_type" placeholder="e.g. loamy" required />
+            </label>
+            <label>
+              Season
+              <input type="text" name="season" placeholder="e.g. rainy" required />
+            </label>
+            <label>
+              State
+              <input type="text" name="state" placeholder="e.g. Lagos" required />
+            </label>
+            <button type="submit" class="btn btn--primary">Recommend Crop</button>
+          </form>
+
+          <div id="recommendation-result" class="recommendation-result" aria-live="polite">
+            <p class="muted">Submit the form to see a crop recommendation and reason.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="chat" aria-labelledby="chat-title">
+        <div class="recommendation-card">
+          <div class="section__heading">
+            <p class="eyebrow">Ask AI</p>
+            <h2 id="chat-title">Ask your farming question</h2>
+          </div>
+
+          <form id="chat-form" class="recommendation-form chat-form">
+            <label>
+              Your Question
+              <textarea name="question" rows="4" placeholder="e.g. How do I prevent leaf wilt in maize?" required></textarea>
+            </label>
+            <button type="submit" class="btn btn--primary">Ask Gemini</button>
+          </form>
+
+          <div id="chat-result" class="recommendation-result" aria-live="polite">
+            <p class="muted">Ask a farming question and get a Gemini-powered response.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="weather" aria-labelledby="weather-title">
+        <div class="recommendation-card">
+          <div class="section__heading">
+            <p class="eyebrow">Weather</p>
+            <h2 id="weather-title">Check local farm conditions</h2>
+          </div>
+
+          <form id="weather-form" class="recommendation-form">
+            <label>
+              City Name
+              <input type="text" name="city" placeholder="e.g. Nairobi" required />
+            </label>
+            <button type="submit" class="btn btn--primary">Check Weather</button>
+          </form>
+
+          <div id="weather-result" class="recommendation-result" aria-live="polite">
+            <p class="muted">Enter a city to see temperature, humidity, wind speed, and farming advice.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="disease" aria-labelledby="disease-title">
+        <div class="recommendation-card">
+          <div class="section__heading">
+            <p class="eyebrow">Disease Detection</p>
+            <h2 id="disease-title">Upload a crop image for diagnosis</h2>
+          </div>
+
+          <form id="disease-form" class="recommendation-form disease-form" enctype="multipart/form-data">
+            <label>
+              Upload Image
+              <input type="file" name="file" accept="image/*" required />
+            </label>
+            <button type="submit" class="btn btn--primary">Detect Disease</button>
+          </form>
+
+          <div id="disease-result" class="recommendation-result" aria-live="polite">
+            <p class="muted">Upload a clear photo of the affected crop to get a disease diagnosis.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section info-section" id="about" aria-labelledby="about-title">
+        <div class="info-card">
+          <h3 id="about-title">Simple, practical, and green</h3>
+          <p>Built for modern farmers who want calm, clear guidance without clutter. This assistant blends weather, crop insight, and AI support into one friendly experience.</p>
+        </div>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', path='script.js') }}"></script>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "maize": {
+    "name": "Maize",
+    "summary": "Maize grows best with warm weather, regular moisture, and good soil fertility.",
+    "reason": "Maize fits well in rainy or warm seasons and performs well in loamy or sandy soil.",
+    "conditions": {
+      "soil": ["loamy", "sandy", "clayey"],
+      "season": ["rainy", "warm", "summer"],
+      "state": ["lagos", "ogun", "ondo", "kaduna", "kano"]
+    },
+    "best_practices": ["Water deeply during dry spells", "Inspect for leaf blight", "Add organic matter to soil"]
+  },
+  "rice": {
+    "name": "Rice",
+    "summary": "Rice prefers flooded or consistently moist conditions and rich soil.",
+    "reason": "Rice thrives in wet seasons and heavy, water-retaining soil.",
+    "conditions": {
+      "soil": ["clayey", "loamy", "rich"],
+      "season": ["rainy", "wet", "monsoon"],
+      "state": ["lagos", "bayelsa", "cross river", "delta", "rivers"]
+    },
+    "best_practices": ["Maintain water levels", "Check for pests", "Use balanced fertilization"]
+  },
+  "wheat": {
+    "name": "Wheat",
+    "summary": "Wheat thrives in cool seasons and well-drained soils.",
+    "reason": "Wheat performs best in cool weather and well-drained soil.",
+    "conditions": {
+      "soil": ["loamy", "sandy", "well drained"],
+      "season": ["cold", "cool", "dry"],
+      "state": ["kaduna", "plateau", "bauchi", "kano"]
+    },
+    "best_practices": ["Avoid waterlogging", "Monitor for rust", "Rotate crops regularly"]
+  }
+}
