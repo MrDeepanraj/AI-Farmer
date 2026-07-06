@@ -7,7 +7,6 @@ from pathlib import Path
 
 import requests
 from dotenv import load_dotenv
-import google.genai as genai
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 UPLOAD_DIR = BASE_DIR / "uploads"
@@ -25,15 +24,42 @@ def _get_api_key() -> str:
 
 
 API_KEY = _get_api_key()
-if not API_KEY:
-    raise RuntimeError("Gemini API key is missing. Set GEMINI_API_KEY in .env")
 
-# Instantiate the modern `google.genai` client with the provided API key.
-# Accept keys that start with 'AQ.' as valid tokens — some users report these working.
-if hasattr(genai, "Client"):
-    GENAI_CLIENT = genai.Client(api_key=API_KEY)
-else:
-    GENAI_CLIENT = genai
+
+def _import_google_sdk():
+    try:
+        import google.genai as genai  # type: ignore
+
+        return genai
+    except Exception:
+        try:
+            import google.generativeai as genai  # type: ignore
+
+            return genai
+        except Exception:
+            return None
+
+
+def _build_gemini_client(api_key: str):
+    if not api_key:
+        return None
+
+    google_sdk = _import_google_sdk()
+    if google_sdk is None:
+        return None
+
+    if hasattr(google_sdk, "Client"):
+        return google_sdk.Client(api_key=api_key)
+
+    if hasattr(google_sdk, "configure"):
+        google_sdk.configure(api_key=api_key)
+        if hasattr(google_sdk, "GenerativeModel"):
+            return google_sdk.GenerativeModel("gemini-2.0-flash")
+
+    return google_sdk
+
+
+GENAI_CLIENT = _build_gemini_client(API_KEY)
 
 
 def _get_model_names() -> list[str]:
@@ -45,20 +71,54 @@ def _get_vision_model_names() -> list[str]:
 
 
 def _call_gemini(prompt: str):
+    if not API_KEY:
+        return None, "Gemini API key is missing. Set GEMINI_API_KEY in the environment or .env file."
+
     if API_KEY == "your_gemini_api_key_here":
         return None, "Gemini API key is still using the placeholder value. Please update GEMINI_API_KEY in the .env file."
 
+    if GENAI_CLIENT is not None:
+        try:
+            if hasattr(GENAI_CLIENT, "interactions") and hasattr(GENAI_CLIENT.interactions, "create"):
+                response = GENAI_CLIENT.interactions.create(
+                    model="gemini-2.0-flash",
+                    input=prompt,
+                )
+                output_text = getattr(response, "output_text", None)
+                if output_text:
+                    return output_text, None
+            elif hasattr(GENAI_CLIENT, "generate_content"):
+                response = GENAI_CLIENT.generate_content(prompt)
+                if hasattr(response, "text"):
+                    return response.text, None
+                if isinstance(response, dict):
+                    return response.get("text") or "", None
+        except Exception as exc:
+            error_message = str(exc)
+            if "401" in error_message or "Unauthorized" in error_message:
+                return None, "Gemini returned Unauthorized. Check your API key, access permissions, and whether the key is valid for gemini-2.0-flash."
+            return None, "Gemini is temporarily unavailable. Please try again later."
+
     try:
-        response = GENAI_CLIENT.interactions.create(
-            model="gemini-3.5-flash",
-            input=prompt,
+        url = (
+            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+            f"?key={API_KEY}"
         )
-        return response.output_text, None
+        payload = {"contents": [{"parts": [{"text": prompt}]}]}
+        response = requests.post(url, json=payload, timeout=30)
+        response.raise_for_status()
+        data = response.json()
+        candidates = data.get("candidates", [])
+        if candidates:
+            parts = candidates[0].get("content", {}).get("parts", [])
+            text_parts = [part.get("text", "") for part in parts if isinstance(part, dict)]
+            return "".join(text_parts), None
+        return None, "Gemini did not return any content."
     except Exception as exc:
         error_message = str(exc)
         if "401" in error_message or "Unauthorized" in error_message:
-            return None, "Gemini returned Unauthorized. Check your API key, access permissions, and whether the key is valid for gemini-3.5-flash."
-        return None, f"Gemini is temporarily unavailable. Please try again later."
+            return None, "Gemini returned Unauthorized. Check your API key, access permissions, and whether the key is valid for gemini-2.0-flash."
+        return None, "Gemini is temporarily unavailable. Please try again later."
 
 
 def generate_advice(crop, weather, symptoms, crop_profile, disease_tip):
